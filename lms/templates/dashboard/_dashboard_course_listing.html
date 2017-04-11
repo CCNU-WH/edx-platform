@@ -164,7 +164,7 @@ from util.course import get_link_for_about_page
                       href="${facebook_url}"
                       target="_blank"
                       title="${_('Share on Facebook')}"
-                      onclick="window.open('${facebook_url}', '${share_window_name}', '${share_window_config}'); return false;">
+                      onclick="CourseSharing.emitShareClicked('${facebook_url}', '${share_window_name}', '${share_window_config}', '${course_overview.id}', 'Facebook', 'LMS Dashboard'); return false;">
                       <span class="sr">${_('Facebook')}</span>
                       <span class="fa fa-facebook" aria-hidden="true"></span>
                     </a>
@@ -181,7 +181,7 @@ from util.course import get_link_for_about_page
                       href="${twitter_url}"
                       target="_blank"
                       title="${_('Share on Twitter')}"
-                      onclick="window.open('${twitter_url}', '${share_window_name}', '${share_window_config}'); return false;">
+                      onclick="CourseSharing.emitShareClicked('${twitter_url}', '${share_window_name}', '${share_window_config}', '${course_overview.id}', 'Twitter', 'LMS Dashboard'); return false;">
                       <span class="sr">${_('Twitter')}</span>
                       <span class="fa fa-twitter" aria-hidden="true"></span>
                     </a>
@@ -447,4 +447,8 @@ from util.course import get_link_for_about_page
 
 <%static:require_module_async module_name="js/dateutil_factory" class_name="DateUtilFactory">
     DateUtilFactory.transform(iterationKey=".localized-datetime");
+</%static:require_module_async>
+
+<%static:require_module_async module_name="js/course_sharing/course_sharing_events" class_name="CourseSharingEvents">
+    CourseSharing = CourseSharingEvents();
 </%static:require_module_async>
