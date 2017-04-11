@@ -19,7 +19,8 @@ log = logging.getLogger(__name__)
 
 class MilestonesTransformer(BlockStructureTransformer):
     """
-    Excludes all special exams (timed, proctored, practice proctored) from the student view.
+    Adds special exams (timed, proctored, practice proctored) to the student view.
+    May exclude special exams.
     Excludes all blocks with unfulfilled milestones from the student view.
     """
     WRITE_VERSION = 1
@@ -29,8 +30,8 @@ class MilestonesTransformer(BlockStructureTransformer):
     def name(cls):
         return "milestones"
 
-    def __init__(self, can_view_special_exams=True):
-        self.can_view_special_exams = can_view_special_exams
+    def __init__(self, include_special_exams=True):
+        self.include_special_exams = include_special_exams
 
     @classmethod
     def collect(cls, block_structure):
@@ -59,15 +60,14 @@ class MilestonesTransformer(BlockStructureTransformer):
 
                 #
                 # call into edx_proctoring subsystem
-                # to get relevant proctoring information regarding this
-                # level of the courseware
+                # to get relevant special exam information
                 #
                 # This will return None, if (user, course_id, content_id)
                 # is not applicable
                 #
-                timed_exam_attempt_context = None
+                special_exam_attempt_context = None
                 try:
-                    timed_exam_attempt_context = get_attempt_status_summary(
+                    special_exam_attempt_context = get_attempt_status_summary(
                         usage_info.user.id,
                         unicode(block_key.course_key),
                         unicode(block_key)
@@ -75,7 +75,7 @@ class MilestonesTransformer(BlockStructureTransformer):
                 except ProctoredExamNotFoundException as ex:
                     log.exception(ex)
 
-                if timed_exam_attempt_context:
+                if special_exam_attempt_context:
                     # yes, user has proctoring context about
                     # this level of the courseware
                     # so add to the accordion data context
@@ -83,7 +83,7 @@ class MilestonesTransformer(BlockStructureTransformer):
                         block_key,
                         self,
                         'special_exam',
-                        timed_exam_attempt_context,
+                        special_exam_attempt_context,
                     )
 
         root_key = block_structure.root_block_usage_key
@@ -108,7 +108,7 @@ class MilestonesTransformer(BlockStructureTransformer):
                     return True
             elif (settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False) and
                   (self.is_special_exam(block_key, block_structure) and
-                   not self.can_view_special_exams)):
+                   not self.include_special_exams)):
                 return True
             return False
 
