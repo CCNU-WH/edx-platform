@@ -1,7 +1,7 @@
 <%!
 from django.utils.translation import ugettext as _
 from contentstore.views.helpers import xblock_studio_url
-from contentstore.utils import is_visible_to_specific_content_groups
+from contentstore.utils import is_visible_to_specific_partition_groups
 from openedx.core.djangolib.js_utils import (
     dump_js_escaped_json, js_escaped_string
 )
@@ -42,7 +42,7 @@ messages = xblock.validate().to_json()
     % endif
 
     <section class="wrapper-xblock ${section_class} ${collapsible_class}
-    % if is_visible_to_specific_content_groups(xblock):
+    % if is_visible_to_specific_partition_groups(xblock):
         has-group-visibility-set
     % endif
     ">
@@ -61,7 +61,12 @@ messages = xblock.validate().to_json()
                 <span class="sr">${_('Expand or Collapse')}</span>
             </a>
             % endif
-            <span class="xblock-display-name">${label | h}</span>
+            <div class="xblock-display-title">
+                <span class="xblock-display-name">${label | h}</span>
+                % if selected_groups_label:
+                <p class="xblock-group-visibility-label">${selected_groups_label}</p>
+                % endif
+            </div>
         </div>
         <div class="header-actions">
             <ul class="actions-list">

@@ -132,10 +132,10 @@ function(Backbone, _, str, ModuleUtils) {
             'staff_only_message': null,
             /**
              * True iff this xblock is a unit, and it has children that are only visible to certain
-             * content groups. Note that this is not a recursive property. Will only be present if
+             * user partition groups. Note that this is not a recursive property. Will only be present if
              * publishing info was explicitly requested.
              */
-            'has_content_group_components': null,
+            'has_partition_group_components': null,
             /**
              * actions defines the state of delete, drag and child add functionality for a xblock.
              * currently, each xblock has default value of 'True' for keys: deletable, draggable and childAddable.
