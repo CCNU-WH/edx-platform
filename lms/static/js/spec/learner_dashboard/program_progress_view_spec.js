@@ -85,7 +85,7 @@ define([
 
         it('should render the progress circle based on the passed in model', function() {
             var progress = getProgress(2, 1, 3);
-            
+
             view = initView(progress);
             view.render();
             testCircle(progress);
@@ -93,7 +93,7 @@ define([
 
         it('should render the progress text based on the passed in model', function() {
             var progress = getProgress(2, 1, 3);
-            
+
             view = initView(progress);
             view.render();
             testText(progress);

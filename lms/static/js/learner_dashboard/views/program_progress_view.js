@@ -84,7 +84,7 @@
                         if (segmentData.classList === 'incomplete' && (i + 1) < total) {
                             segmentData.dashArray = segmentDash;
                         }
-                        
+
                         progressHTML.push(this.segmentTpl(segmentData));
                     }
 
