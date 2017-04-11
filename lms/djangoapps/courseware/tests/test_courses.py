@@ -162,9 +162,6 @@ class CoursesTest(ModuleStoreTestCase):
             )
 
     def test_get_current_child(self):
-        """
-        Unit tests for get_current_child.
-        """
         mock_xmodule = mock.MagicMock()
         self.assertIsNone(get_current_child(mock_xmodule))
 

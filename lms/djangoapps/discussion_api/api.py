@@ -81,8 +81,11 @@ def _get_course(course_key, user):
     try:
         course = get_course_with_access(user, 'load', course_key, check_if_enrolled=True)
     except Http404:
+        # Convert 404s into CourseNotFoundErrors.
         raise CourseNotFoundError("Course not found.")
     except CourseAccessRedirect:
+        # Raise course not found if the user cannot access the course
+        # since it doesn't make sense to redirect an API.
         raise CourseNotFoundError("Course not found.")
     if not any([tab.type == 'discussion' and tab.is_enabled(course, user) for tab in course.tabs]):
         raise DiscussionDisabledError("Discussion is disabled for the course.")

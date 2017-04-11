@@ -75,7 +75,7 @@ from courseware.date_summary import VerifiedUpgradeDeadlineDate
 from courseware.masquerade import setup_masquerade
 from courseware.model_data import FieldDataCache
 from courseware.models import StudentModule, BaseStudentModuleHistory
-from courseware.url_helpers import get_redirect_url, get_redirect_url_for_global_staff
+from courseware.url_helpers import get_redirect_url
 from courseware.user_state_client import DjangoXBlockUserStateClient
 from edxmako.shortcuts import render_to_response, render_to_string, marketing_link
 from openedx.core.djangoapps.catalog.utils import get_programs, get_programs_with_type
@@ -226,11 +226,6 @@ def jump_to(_request, course_id, location):
         raise Http404(u"Invalid course_key or usage_key")
     try:
         redirect_url = get_redirect_url(course_key, usage_key)
-        user = _request.user
-        user_is_global_staff = GlobalStaff().has_user(user)
-        user_is_enrolled = CourseEnrollment.is_enrolled(user, course_key)
-        if user_is_global_staff and not user_is_enrolled:
-            redirect_url = get_redirect_url_for_global_staff(course_key, _next=redirect_url)
     except ItemNotFoundError:
         raise Http404(u"No data at this location: {0}".format(usage_key))
     except NoPathToItem:
@@ -430,19 +425,19 @@ class CourseTabView(EdxFragmentView):
                 set_custom_metrics_for_course_key(course_key)
                 return super(CourseTabView, self).get(request, course=course, page_context=page_context, **kwargs)
             except Exception as exception:  # pylint: disable=broad-except
-                return CourseTabView.handle_unexpected_error(request, course, exception)
+                return CourseTabView.handle_exceptions(request, course, exception)
 
     @staticmethod
-    def handle_unexpected_error(request, course, exception):
+    def handle_exceptions(request, course, exception):
         """
-        Handle unexpected exceptions raised when rendering a view.
+        Handle exceptions raised when rendering a view.
         """
-        if settings.DEBUG:
-            raise
         if isinstance(exception, Redirect) or isinstance(exception, Http404):
             raise
         if isinstance(exception, UnicodeEncodeError):
             raise Http404("URL contains Unicode characters")
+        if settings.DEBUG:
+            raise
         user = request.user
         log.exception(
             u"Error in %s: user=%s, effective_user=%s, course=%s",

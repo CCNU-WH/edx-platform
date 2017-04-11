@@ -51,17 +51,3 @@ def get_redirect_url(course_key, usage_key):
         )
     redirect_url += "?{}".format(urlencode({'activate_block_id': unicode(final_target_id)}))
     return redirect_url
-
-
-def get_redirect_url_for_global_staff(course_key, _next=None):
-    """
-    Returns the redirect url for staff enrollment
-
-    Args:
-        course_key(str): Course key string
-        _next(str): Redirect URL of course component (defaults to the current URL)
-    """
-    redirect_url = ("{url}?next={redirect}".format(
-        url=reverse('enroll_staff', args=[unicode(course_key)]),
-        redirect=_next or RequestCache.get_current_request().path))
-    return redirect_url

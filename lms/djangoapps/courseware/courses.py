@@ -479,6 +479,7 @@ def get_current_child(xmodule, min_depth=None, requested_child=None):
 
     Returns None only if there are no children at all.
     """
+    # TODO: convert this method to use the Course Blocks API
     def _get_child(children):
         """
         Returns either the first or last child based on the value of
@@ -524,6 +525,7 @@ def get_last_accessed_courseware(course, request, user):
     Returns a tuple containing the courseware module (URL, id) that the user last accessed,
     or (None, None) if it cannot be found.
     """
+    # TODO: convert this method to use the Course Blocks API
     field_data_cache = FieldDataCache.cache_for_descriptor_descendents(
         course.id, request.user, course, depth=2
     )

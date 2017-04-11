@@ -40,11 +40,11 @@ def mobile_course_access(depth=0):
                         depth=depth,
                         check_if_enrolled=True,
                     )
-                except CourseAccessRedirect:
-                    # Raise a 404 if the user does not have course access
-                    raise Http404
                 except CoursewareAccessException as error:
                     return Response(data=error.to_json(), status=status.HTTP_404_NOT_FOUND)
+                except CourseAccessRedirect as error:
+                    # Raise a 404 if the user does not have course access
+                    raise Http404
                 return func(self, request, course=course, *args, **kwargs)
 
         return _wrapper
