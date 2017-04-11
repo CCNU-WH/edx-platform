@@ -27,15 +27,15 @@ def program_listing(request):
     if not programs_config.enabled:
         raise Http404
 
-    # meter = ProgramProgressMeter(request.user)
+    meter = ProgramProgressMeter(request.user)
 
     context = {
         'credentials': get_programs_credentials(request.user),
         'disable_courseware_js': True,
         'marketing_url': get_program_marketing_url(programs_config),
         'nav_hidden': True,
-        # 'programs': meter.engaged_programs,
-        # 'progress': meter.progress(),
+        'programs': meter.engaged_programs,
+        'progress': meter.progress(),
         'show_program_listing': programs_config.enabled,
         'uses_pattern_library': True,
     }
@@ -48,16 +48,16 @@ def program_listing(request):
 def program_details(request, program_uuid):
     """View details about a specific program."""
     programs_config = ProgramsApiConfig.current()
-    # if not programs_config.enabled:
-    #     raise Http404
+    if not programs_config.enabled:
+        raise Http404
 
-    # meter = ProgramProgressMeter(request.user, uuid=program_uuid)
-    # program_data = meter.programs[0]
+    meter = ProgramProgressMeter(request.user, uuid=program_uuid)
+    program_data = meter.programs[0]
 
-    # if not program_data:
-        # raise Http404
+    if not program_data:
+        raise Http404
 
-    # program_data = ProgramDataExtender(program_data, request.user).extend()
+    program_data = ProgramDataExtender(program_data, request.user).extend()
 
     urls = {
         'program_listing_url': reverse('program_listing_view'),
@@ -77,15 +77,15 @@ def program_details(request, program_uuid):
     }
 
     if waffle.switch_is_active('new_program_progress'):
-        # course_data = meter.progress(programs=[program_data], count_only=False)[0]
-        # certificate_data = get_certificates(request.user, program_data)
+        course_data = meter.progress(programs=[program_data], count_only=False)[0]
+        certificate_data = get_certificates(request.user, program_data)
 
-        # program_data.pop('courses')
+        program_data.pop('courses')
 
         context.update({
-            'program_data': {}, #program_data,
-            'course_data': [], #course_data,
-            'certificate_data': {}, #certificate_data,
+            'program_data': program_data,
+            'course_data': course_data,
+            'certificate_data': certificate_data,
         })
 
         return render_to_response('learner_dashboard/program_details_2017.html', context)
